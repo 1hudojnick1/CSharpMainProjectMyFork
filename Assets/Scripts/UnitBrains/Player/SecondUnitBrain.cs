@@ -1,6 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Utilities;
+using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -12,15 +17,11 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        private List<Vector2Int> _allCurrentTargets = new List<Vector2Int>();
 
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////   
-
             var temperature = GetTemperature();
 
             if (temperature >= overheatTemperature)
@@ -36,48 +37,72 @@ namespace UnitBrains.Player
 
             IncreaseTemperature();
 
-            ///////////////////////////////////////
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            Vector2Int currentTarget = Vector2Int.zero;
+            if (_allCurrentTargets.Count > 0)
+            {
+                currentTarget = _allCurrentTargets[0];
+            }
+            else
+            {
+                currentTarget = unit.Pos;
+            }
+
+            if (IsTargetInRange(currentTarget))
+            {
+                return unit.Pos;
+            }
+            else
+            {
+                return unit.Pos.CalcNextStepTowards(currentTarget);
+            }
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
          
-            List<Vector2Int> result = GetReachableTargets();
-             
-            
-            if (result.Count == 0)
+            List<Vector2Int>mostDangerousTarget = new List<Vector2Int>();
+            Vector2Int mostDangerousTargetPosition = Vector2Int.zero;
+
+            float enemyWithMinDistanceToBaseValue = float.MaxValue;
+
+            foreach (Vector2Int dangerTarget in GetAllTargets())
             {
-                return result;
-            }
+                float enemyDistanceToBaseValue = DistanceToOwnBase(dangerTarget);
 
-            Vector2Int closestTarget = Vector2Int.zero;
-            float minimalDistance = float.MaxValue;
-
-            foreach (var target in result)
-            {
-                float TargetDistance = DistanceToOwnBase(target);
-
-
-                if (minimalDistance >= TargetDistance)
+                if (enemyDistanceToBaseValue < enemyWithMinDistanceToBaseValue)
                 {
-                    minimalDistance = TargetDistance;
-                    closestTarget = target;
+                    enemyWithMinDistanceToBaseValue = enemyDistanceToBaseValue;
+                    mostDangerousTargetPosition = dangerTarget;
                 }
-
             }
-            result.Clear();
-            result.Add(closestTarget);
-            return result;
-            ///////////////////////////////////////
+
+            _allCurrentTargets.Clear();
+
+            if (enemyWithMinDistanceToBaseValue < float.MaxValue)
+            {
+                _allCurrentTargets.Add(mostDangerousTargetPosition);
+
+                if (IsTargetInRange(mostDangerousTargetPosition))
+                {
+                    mostDangerousTarget.Add(mostDangerousTargetPosition);
+                }
+            }
+            else
+            {
+                if (IsPlayerUnitBrain)
+                {
+                    var enemyBaseTarget = runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+                    _allCurrentTargets.Add(enemyBaseTarget);
+                }
+            }
+            return mostDangerousTarget;
         }
+
+
 
         public override void Update(float deltaTime, float time)
         {
