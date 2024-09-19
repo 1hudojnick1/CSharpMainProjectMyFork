@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
 using Utilities;
-using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -17,99 +15,89 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        private List<Vector2Int> _allCurrentTargets = new List<Vector2Int>();
+
+        private static int unitCounter = 0;
+        private int unitNumber;
+        private const int maxTargets = 3;
+
+        private List<Vector2Int> TargetsOutOfReach = new List<Vector2Int>();
 
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            var temperature = GetTemperature();
+            float currentTemperature = GetTemperature();
 
-            if (temperature >= overheatTemperature)
-            {
+            if (currentTemperature >= overheatTemperature)
                 return;
-            }
 
-            for (int i = 0; i < temperature; i++)
+            for (int i = 0; i <= currentTemperature; i++)
             {
                 var projectile = CreateProjectile(forTarget);
                 AddProjectileToList(projectile, intoList);
             }
-
             IncreaseTemperature();
-
         }
 
         public override Vector2Int GetNextStep()
         {
-            Vector2Int currentTarget = Vector2Int.zero;
-            if (_allCurrentTargets.Count > 0)
-            {
-                currentTarget = _allCurrentTargets[0];
-            }
-            else
-            {
-                currentTarget = unit.Pos;
-            }
-
-            if (IsTargetInRange(currentTarget))
-            {
+            if (TargetsOutOfReach.Count <= 0 || IsTargetInRange(TargetsOutOfReach[0]))
                 return unit.Pos;
-            }
             else
-            {
-                return unit.Pos.CalcNextStepTowards(currentTarget);
-            }
+                return unit.Pos.CalcNextStepTowards(TargetsOutOfReach[0]);
         }
-
         protected override List<Vector2Int> SelectTargets()
         {
-         
-            List<Vector2Int>mostDangerousTarget = new List<Vector2Int>();
-            Vector2Int mostDangerousTargetPosition = Vector2Int.zero;
+            List<Vector2Int> result = new List<Vector2Int>();
+            Vector2Int targetPosition;
 
-            float enemyWithMinDistanceToBaseValue = float.MaxValue;
+            TargetsOutOfReach.Clear();
 
-            foreach (Vector2Int dangerTarget in GetAllTargets())
+            foreach (Vector2Int target in GetAllTargets())
             {
-                float enemyDistanceToBaseValue = DistanceToOwnBase(dangerTarget);
-
-                if (enemyDistanceToBaseValue < enemyWithMinDistanceToBaseValue)
-                {
-                    enemyWithMinDistanceToBaseValue = enemyDistanceToBaseValue;
-                    mostDangerousTargetPosition = dangerTarget;
-                }
+                TargetsOutOfReach.Add(target);
             }
 
-            _allCurrentTargets.Clear();
-
-            if (enemyWithMinDistanceToBaseValue < float.MaxValue)
+            if (TargetsOutOfReach.Count == 0)
             {
-                _allCurrentTargets.Add(mostDangerousTargetPosition);
-
-                if (IsTargetInRange(mostDangerousTargetPosition))
-                {
-                    mostDangerousTarget.Add(mostDangerousTargetPosition);
-                }
+                int enemyBaseId = IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId;
+                Vector2Int enemyBase = runtimeModel.RoMap.Bases[enemyBaseId];
+                TargetsOutOfReach.Add(enemyBase);
             }
             else
             {
-                if (IsPlayerUnitBrain)
+                SortByDistanceToOwnBase(TargetsOutOfReach);
+
+                int targetIndex = unitNumber % maxTargets;
+
+                if (targetIndex > (TargetsOutOfReach.Count - 1))
                 {
-                    var enemyBaseTarget = runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
-                    _allCurrentTargets.Add(enemyBaseTarget);
+                    targetPosition = TargetsOutOfReach[0];
                 }
+                else
+                {
+                    if (targetIndex == 0)
+                    {
+                        targetPosition = TargetsOutOfReach[targetIndex];
+                    }
+                    else
+                    {
+                        targetPosition = TargetsOutOfReach[targetIndex - 1];
+                    }
+
+                }
+
+                if (IsTargetInRange(targetPosition))
+                    result.Add(targetPosition);
             }
-            return mostDangerousTarget;
+
+            return result;
         }
-
-
-
         public override void Update(float deltaTime, float time)
         {
             if (_overheated)
-            {              
+            {
                 _cooldownTime += Time.deltaTime;
-                float t = _cooldownTime / (OverheatCooldown/10);
+                float t = _cooldownTime / (OverheatCooldown / 10);
                 _temperature = Mathf.Lerp(OverheatTemperature, 0, t);
                 if (t >= 1)
                 {
@@ -118,13 +106,11 @@ namespace UnitBrains.Player
                 }
             }
         }
-
         private int GetTemperature()
         {
-            if(_overheated) return (int) OverheatTemperature;
+            if (_overheated) return (int)OverheatTemperature;
             else return (int)_temperature;
         }
-
         private void IncreaseTemperature()
         {
             _temperature += 1f;
