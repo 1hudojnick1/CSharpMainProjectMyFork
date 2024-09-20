@@ -3,7 +3,11 @@
   "WorkspaceRootPath": "E:\\XYZ\\Fork\\CSharpMainProjectMyFork\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{C12C09C7-888C-7364-148B-3BC33A05AB3F}|Root.csproj|e:\\xyz\\fork\\csharpmainprojectmyfork\\assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{C12C09C7-888C-7364-148B-3BC33A05AB3F}|Root.csproj|e:\\xyz\\fork\\csharpmainprojectmyfork\\assets\\scripts\\unitbrains\\player\\thirdunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C12C09C7-888C-7364-148B-3BC33A05AB3F}|Root.csproj|solutionrelative:assets\\scripts\\unitbrains\\player\\thirdunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C12C09C7-888C-7364-148B-3BC33A05AB3F}|Root.csproj|E:\\XYZ\\Fork\\CSharpMainProjectMyFork\\assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C12C09C7-888C-7364-148B-3BC33A05AB3F}|Root.csproj|solutionrelative:assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -22,6 +26,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "ThirdUnitBrain.cs",
+              "DocumentMoniker": "E:\\XYZ\\Fork\\CSharpMainProjectMyFork\\Assets\\Scripts\\UnitBrains\\Player\\ThirdUnitBrain.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\Player\\ThirdUnitBrain.cs",
+              "ToolTip": "E:\\XYZ\\Fork\\CSharpMainProjectMyFork\\Assets\\Scripts\\UnitBrains\\Player\\ThirdUnitBrain.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Player\\ThirdUnitBrain.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACsAAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-19T19:20:25.34Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "SecondUnitBrain.cs",
               "DocumentMoniker": "E:\\XYZ\\Fork\\CSharpMainProjectMyFork\\Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
@@ -29,12 +46,11 @@
               "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T16:12:56.685Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-18T16:12:56.685Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Program.cs",
               "DocumentMoniker": "E:\\XYZ\\\u041F\u0440\u043E\u0435\u043A\u0442\u044B\\XYZ (consoleProject)\\XYZ (consoleProject)\\Program.cs",
               "RelativeDocumentMoniker": "..\\..\\\u041F\u0440\u043E\u0435\u043A\u0442\u044B\\XYZ (consoleProject)\\XYZ (consoleProject)\\Program.cs",
