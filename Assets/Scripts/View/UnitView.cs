@@ -9,6 +9,11 @@ namespace View
         [SerializeField] private HealthBar _healthBar;
         [SerializeField] private DebugPathOutput _debugPathOutput;
 
+        private void Start()
+        {
+            _debugPathOutput = GetComponent<DebugPathOutput>();
+        }
+
         public void UpdateState(IReadOnlyUnit model, Vector3 prevPosition)
         {
             _healthBar.UpdateHealth((float) model.Health / model.Config.MaxHealth);

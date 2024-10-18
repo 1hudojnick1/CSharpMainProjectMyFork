@@ -5,15 +5,12 @@ using System.Linq;
 using UnitBrains.Player;
 using UnityEngine;
 using Utilities;
-
 namespace UnitBrains.Player
 {
-
 }
 public class Third : DefaultPlayerUnitBrain
 {
     public override string TargetUnitName => "Ironclad Behemoth";
-
     private float _transitionStartTime;
     private State _currentState = State.Moving;
     private State _targetState = State.Moving;
@@ -28,7 +25,6 @@ public class Third : DefaultPlayerUnitBrain
 
     public override Vector2Int GetNextStep()
     {
-       
         if (_currentState == State.Moving)
         {
             return base.GetNextStep();
@@ -41,7 +37,6 @@ public class Third : DefaultPlayerUnitBrain
 
     protected override List<Vector2Int> SelectTargets()
     {
-        
         if (_currentState == State.Attacking)
         {
             return base.SelectTargets();
@@ -51,7 +46,6 @@ public class Third : DefaultPlayerUnitBrain
             return new List<Vector2Int>();
         }
     }
-
     public override void Update(float deltaTime, float time)
     {
         if (IsTransitionInProgress)
@@ -74,7 +68,6 @@ public class Third : DefaultPlayerUnitBrain
             }
         }
     }
-
     private void StartTransitionToState(State targetState)
     {
         _transitionStartTime = Time.time;
