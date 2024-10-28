@@ -31,11 +31,11 @@ namespace UnitBrains.Player
             {
                 return unit.Pos;
             }
-            IReadOnlyUnit recomendedUnit = TargetAdviser.Instance.RecomendedTarget;
-            Vector2Int recomendedPosition = recomendedUnit == null ? TargetAdviser.Instance.EnemyBase : recomendedUnit.Pos;
+            IReadOnlyUnit recomendedUnit = targetAdviser.RecomendedTarget;
+            Vector2Int recomendedPosition = recomendedUnit == null ? targetAdviser.EnemyBase : recomendedUnit.Pos;
             if (!IsTargetInDoubleRange(recomendedPosition))
             {
-                recomendedPosition = TargetAdviser.Instance.RecomendedPosition;
+                recomendedPosition = targetAdviser.RecomendedPosition;
             }
             if (unit.Pos.Equals(recomendedPosition))
             {

@@ -11,48 +11,30 @@ using Model.Runtime.ReadOnly;
 using UnityEngine;
 using static UnityEngine.UI.CanvasScaler;
 using UnitBrains.Pathfinding;
-
+using Codice.CM.Triggers;
 namespace Assets.Scripts.UnitBrains.Player
 {
     public class TargetAdviser
     {
-
         private static TargetAdviser _instance;
         private IReadOnlyRuntimeModel _runtimeModel;
-
         public Vector2Int PlayerBase => _runtimeModel.RoMap.Bases[RuntimeModel.PlayerId];
         public Vector2Int EnemyBase => _runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId];
 
         public IReadOnlyUnit RecomendedTarget { get; private set; }
         public Vector2Int RecomendedPosition { get; private set; }
-        public static TargetAdviser Instance
+        public TargetAdviser(IReadOnlyRuntimeModel runtimeModel, TimeUtil timeUtil)
         {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new TargetAdviser();
-                }
-                return _instance;
-            }
-        }
-
-        private TargetAdviser()
-        {
-            _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
-
-            var timeUtil = ServiceLocator.Get<TimeUtil>();
+            _runtimeModel = runtimeModel;
 
             timeUtil.AddFixedUpdateAction(Update);
-            RecomendedPosition = EnemyBase;
-
         }
         private void Update(float deltaTime)
         {
+            if (_runtimeModel.RoMap == null) { return; }
             RecomendedTarget = CalculateTargetUnit();
             RecomendedPosition = CalculateTargetPosition();
         }
-
         private IReadOnlyUnit CalculateTargetUnit()
         {
             var botUnits = _runtimeModel.RoBotUnits.ToList();
@@ -90,7 +72,6 @@ namespace Assets.Scripts.UnitBrains.Player
                 return EnemyBase;
             }
         }
-
         private Vector2Int GetPositionOnPathAtRange(AStarUnitPath path, float range)
         {
             foreach (var pos in path.GetPath())
@@ -102,24 +83,20 @@ namespace Assets.Scripts.UnitBrains.Player
             }
             return path.EndPoint;
         }
-
         protected bool IsCloserToPlayerBase(IReadOnlyUnit unit)
         {
             return DistanceToOwnBase(unit) <= DistanceToBotBase(unit);
         }
-
         protected float DistanceToOwnBase(IReadOnlyUnit fromPos) =>
             Vector2Int.Distance(fromPos.Pos, _runtimeModel.RoMap.Bases[RuntimeModel.PlayerId]);
         protected float DistanceToBotBase(IReadOnlyUnit fromPos) =>
             Vector2Int.Distance(fromPos.Pos, _runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
-
         private int CompareByDistanceToPlayerBase(IReadOnlyUnit a, IReadOnlyUnit b)
         {
             var distanceA = DistanceToOwnBase(a);
             var distanceB = DistanceToOwnBase(b);
             return distanceA.CompareTo(distanceB);
         }
-
         private int CompareByHealth(IReadOnlyUnit a, IReadOnlyUnit b)
         {
             return a.Health - b.Health;

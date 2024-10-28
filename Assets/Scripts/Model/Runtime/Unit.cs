@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Model.Config;
+using Assets.Scripts.UnitBrains.Player;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
 using UnitBrains;
@@ -26,14 +27,15 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
-        public Unit(UnitConfig config, Vector2Int startPos)
+
+        public Unit(UnitConfig config, Vector2Int startPos, TargetAdviser targetAdviser)
         {
             Config = config;
             Pos = startPos;
             Health = config.MaxHealth;
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
+            _brain.SetTargetAdviser(targetAdviser);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
         }
 
