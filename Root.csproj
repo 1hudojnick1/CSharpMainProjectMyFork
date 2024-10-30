@@ -64,6 +64,7 @@
     <Compile Include="Assets\Scripts\Model\Runtime\Projectiles\BaseProjectile.cs" />
     <Compile Include="Assets\Scripts\View\UnitView.cs" />
     <Compile Include="Assets\Scripts\Model\Runtime\ReadOnly\IReadOnlyUnit.cs" />
+    <Compile Include="Assets\Scripts\UnitBrains\Buffs\BuffController.cs" />
     <Compile Include="Assets\Scripts\UnitBrains\BaseUnitBrain.cs" />
     <Compile Include="Assets\Scripts\Utilities\CameraPositioning.cs" />
     <Compile Include="Assets\Scripts\View\ChooseUnitView.cs" />
@@ -87,7 +88,9 @@
     <Compile Include="Assets\Scripts\UnitBrains\Player\SecondUnitBrain.cs" />
     <Compile Include="Assets\Scripts\Model\PersistedModel.cs" />
     <Compile Include="Assets\Scripts\Model\Runtime\ReadOnly\IReadOnlyBase.cs" />
+    <Compile Include="Assets\Scripts\UnitBrains\Buffs\Buff.cs" />
     <Compile Include="Assets\Scripts\Utilities\TimeUtil.cs" />
+    <Compile Include="Assets\Scripts\UnitBrains\Buffs\HelpingHandBuff.cs" />
     <Compile Include="Assets\Scripts\UnitBrains\Player\ThirdUnitBrain.cs" />
     <Compile Include="Assets\Scripts\Controller\LevelController.cs" />
     <Compile Include="Assets\Scripts\Model\Runtime\ReadOnly\IReadOnlyProjectile.cs" />

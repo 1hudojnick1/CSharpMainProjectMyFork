@@ -48,7 +48,7 @@ namespace UnitBrains.Player
         {
             var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange * 2;
             var diff = possibleTarget - unit.Pos;
-            return diff.sqrMagnitude * 2 < attackRangeSqr;
+            return diff.sqrMagnitude < attackRangeSqr;
         }
     }
 }

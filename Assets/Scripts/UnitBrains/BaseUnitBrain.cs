@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.UnitBrains.Buffs;
 using Assets.Scripts.UnitBrains.Player;
 using Model;
 using Model.Runtime.Projectiles;
@@ -22,6 +23,12 @@ namespace UnitBrains
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
         protected BaseUnitPath _activePath = null;
         protected TargetAdviser targetAdviser { get; private set; }
+        protected BuffController BuffController { get; private set; }
+
+        protected BaseUnitBrain()
+        {
+            BuffController = ServiceLocator.Get<BuffController>();
+        }
 
 
         private readonly Vector2[] _projectileShifts = new Vector2[]

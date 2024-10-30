@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Model;
 using Model.Runtime.Projectiles;
+using Model.Runtime.ReadOnly;
 using UnitBrains.Pathfinding;
 using UnityEngine;
 using Utilities;
+using Assets.Scripts.UnitBrains.Buffs;
 
 namespace UnitBrains.Player
 {
@@ -123,6 +125,20 @@ namespace UnitBrains.Player
                     _overheated = false;
                 }
             }
+            if (IsAnyBehemotsNear())
+            {
+                BuffController.AddBuffToUnit(unit, new HelpingHandBuff());
+            }
+        }
+
+        protected bool IsAnyBehemotsNear()
+        {
+            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            return runtimeModel.RoUnits
+                .Where(u => u.Config.IsPlayerUnit)
+                .Where(u => u.Config.Name == "Ironclad Behemoth")
+                .Where(u => (u.Pos - this.unit.Pos).sqrMagnitude < attackRangeSqr)
+                .Any();
         }
         private int GetTemperature()
         {
@@ -133,6 +149,7 @@ namespace UnitBrains.Player
         {
             _temperature += 1f;
             if (_temperature >= OverheatTemperature) _overheated = true;
+
         }
     }
 }
