@@ -7,6 +7,9 @@ using UnitBrains;
 using UnitBrains.Pathfinding;
 using UnityEngine;
 using Utilities;
+using Assets.Scripts.Utilities;
+using Assets.Scripts.UnitBrains;
+using Assets.Scripts.UnitBrains.Player;
 
 namespace Model.Runtime
 {
@@ -18,22 +21,26 @@ namespace Model.Runtime
         public bool IsDead => Health <= 0;
         public BaseUnitPath ActivePath => _brain?.ActivePath;
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
-
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
         private BaseUnitBrain _brain;
-
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
-        public Unit(UnitConfig config, Vector2Int startPos)
+
+        public float Speed { get; set; } // Скорость движения
+        public float AttackSpeed { get; set; } // Скорость атаки
+
+        public Unit(UnitConfig config, Vector2Int startPos, UnitCoordinator coordinator)
         {
             Config = config;
             Pos = startPos;
             Health = config.MaxHealth;
+            Speed = Config.MoveDelay; // Инициализация стандартной скоростью
+            AttackSpeed = Config.AttackDelay; // Инициализация стандартной скоростью атаки
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
+            _brain.SetCoordinator(coordinator);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
         }
 
@@ -41,22 +48,29 @@ namespace Model.Runtime
         {
             if (IsDead)
                 return;
-            
+
+            BuffSystem buffSystem = ServiceLocator.Get<BuffSystem>();
+
+            // Получаем модификаторы от баффов
+            float moveSpeedModifier = buffSystem.GetMoveSpeedModifier(this);
+            float attackSpeedModifier = buffSystem.GetAttackSpeedModifier(this);
+
             if (_nextBrainUpdateTime < time)
             {
                 _nextBrainUpdateTime = time + Config.BrainUpdateInterval;
                 _brain.Update(deltaTime, time);
             }
-            
+
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+
+                _nextMoveTime = time + Speed * moveSpeedModifier; // Учитываем бафф на скорость передвижения
                 Move();
             }
-            
+
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime = time + AttackSpeed * attackSpeedModifier; // Учитываем бафф на скорость атаки
             }
         }
 
@@ -65,11 +79,9 @@ namespace Model.Runtime
             var projectiles = _brain.GetProjectiles();
             if (projectiles == null || projectiles.Count == 0)
                 return false;
-            
             _pendingProjectiles.AddRange(projectiles);
             return true;
         }
-
         private void Move()
         {
             var targetPos = _brain.GetNextStep();
@@ -79,13 +91,11 @@ namespace Model.Runtime
                 Debug.LogError($"Brain for unit {Config.Name} returned invalid move: {delta}");
                 return;
             }
-
             if (_runtimeModel.RoMap[targetPos] ||
                 _runtimeModel.RoUnits.Any(u => u.Pos == targetPos))
             {
                 return;
             }
-            
             Pos = targetPos;
         }
 
@@ -93,7 +103,6 @@ namespace Model.Runtime
         {
             _pendingProjectiles.Clear();
         }
-
         public void TakeDamage(int projectileDamage)
         {
             Health -= projectileDamage;

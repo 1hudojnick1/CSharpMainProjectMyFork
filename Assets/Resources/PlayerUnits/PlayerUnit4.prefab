@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1203638322487831752}
   - component: {fileID: 3664015912038799981}
   m_Layer: 11
-  m_Name: PlayerUnit3
+  m_Name: PlayerUnit4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -62,9 +62,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isPlayerUnit: 1
-  _name: Ironclad Behemoth
+  _name: Flame Elephant
   _icon: {fileID: 21300000, guid: ed0ebd9a5a7925f4892864c78333b9f4, type: 3}
-  _cost: 200
+  _cost: 250
   _maxHealth: 400
   _brainUpdateDelay: 0.25
   _moveDelay: 0.25

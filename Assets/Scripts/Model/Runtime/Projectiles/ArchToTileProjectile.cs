@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-
 namespace Model.Runtime.Projectiles
 {
     public class ArchToTileProjectile : BaseProjectile
@@ -8,14 +7,13 @@ namespace Model.Runtime.Projectiles
         private readonly Vector2Int _target;
         private readonly float _timeToTarget;
         private readonly float _totalDistance;
-        
+
         public ArchToTileProjectile(Unit unit, Vector2Int target, int damage, Vector2Int startPoint) : base(damage, startPoint)
         {
             _target = target;
             _totalDistance = Vector2.Distance(StartPoint, _target);
             _timeToTarget = _totalDistance / ProjectileSpeed;
         }
-
         protected override void UpdateImpl(float deltaTime, float time)
         {
             float timeSinceStart = time - StartTime;
@@ -25,16 +23,18 @@ namespace Model.Runtime.Projectiles
 
             float localHeight = 0f;
             float totalDistance = _totalDistance;
+            ///////////////////////////////////////
+            // Insert you code here
+            ///////////////////////////////////////
 
-            /////////////////////////////////////////
-            //// Insert you code here
-            /////////////////////////////////////////
             float maxHeight = totalDistance * 0.6f;
-            localHeight = maxHeight * (-(t * 2 - 1) * (t * 2 - 1) + 1);
-            /////////////////////////////////////////
-            //// End of the code to insert
-            /////////////////////////////////////////
+            float x = (t * 2 - 1);
+            float formula = maxHeight * (-x * x + 1);
+            localHeight = formula;
 
+            ///////////////////////////////////////
+            // End of the code to insert
+            ///////////////////////////////////////
             Height = localHeight;
             if (time > StartTime + _timeToTarget)
                 Hit(_target);

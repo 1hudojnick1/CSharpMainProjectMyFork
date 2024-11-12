@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using View;
 
@@ -9,10 +10,10 @@ namespace UnitBrains.Pathfinding
     {
         [SerializeField] private GameObject cellHighlightPrefab;
         [SerializeField] private int maxHighlights = 5;
-
         public BaseUnitPath Path { get; private set; }
         private readonly List<GameObject> allHighlights = new();
         private Coroutine highlightCoroutine;
+        private static float delayHighlight = 0.15f;
 
         public void HighlightPath(BaseUnitPath path)
         {
@@ -21,19 +22,28 @@ namespace UnitBrains.Pathfinding
             {
                 DestroyHighlight(0);
             }
-            
+
+
             if (highlightCoroutine != null)
             {
                 StopCoroutine(highlightCoroutine);
             }
-
             highlightCoroutine = StartCoroutine(HighlightCoroutine(path));
         }
-
         private IEnumerator HighlightCoroutine(BaseUnitPath path)
         {
-            // TODO Implement me
-            yield break;
+            foreach (var cell in path.GetPath())
+            {
+                CreateHighlight(cell);
+
+                if (allHighlights.Count() > maxHighlights)
+                {
+                    DestroyHighlight(0);
+                }
+                yield return new WaitForSeconds(delayHighlight);
+            }
+
+            HighlightPath(path);
         }
 
         private void CreateHighlight(Vector2Int atCell)
@@ -43,7 +53,6 @@ namespace UnitBrains.Pathfinding
             highlight.transform.SetParent(transform);
             allHighlights.Add(highlight);
         }
-
         private void DestroyHighlight(int index)
         {
             Destroy(allHighlights[index]);
